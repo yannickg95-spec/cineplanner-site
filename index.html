@@ -213,29 +213,23 @@
   .lrow .chg { font-size: calc(15 * var(--p)); } .lrow .chg b { font-weight: 600; }
   .note { font-size: calc(13 * var(--p)); color: #8a8a8e; padding: calc(8 * var(--p)) calc(34 * var(--p)) calc(18 * var(--p)); }
 
-  /* CineStager import */
-  .cs-sheet { width: calc(760 * var(--p)); }
-  .seg-ios { display: flex; padding: calc(2 * var(--p)); border-radius: calc(9 * var(--p)); background: rgba(118,118,128,0.12); }
-  .seg-ios span { flex: 1; text-align: center; font-size: calc(13 * var(--p)); font-weight: 500; line-height: calc(28 * var(--p)); border-radius: calc(7 * var(--p)); white-space: nowrap; padding: 0 calc(14 * var(--p)); }
-  .seg-ios span.on { background: #fff; box-shadow: 0 calc(3 * var(--p)) calc(8 * var(--p)) rgba(0,0,0,0.12); }
-  .orgrow { display: flex; align-items: center; justify-content: space-between; padding: calc(4 * var(--p)) calc(18 * var(--p)) calc(12 * var(--p)); font-size: calc(15 * var(--p)); color: #6d6d72; }
-  .shots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(12 * var(--p)); padding: 0 calc(18 * var(--p)); }
-  .cs-card { position: relative; background: #fff; border-radius: calc(12 * var(--p)); overflow: hidden; box-shadow: 0 0 0 calc(2.5 * var(--p)) transparent; }
-  .cs-card.sel { box-shadow: 0 0 0 calc(2.5 * var(--p)) #007aff; }
-  .cs-card .th { aspect-ratio: 4 / 3; background-size: cover; background-position: center; position: relative; }
-  .cs-card .ck { position: absolute; top: calc(7 * var(--p)); right: calc(7 * var(--p)); width: calc(22 * var(--p)); height: calc(22 * var(--p)); border-radius: 50%; border: calc(1.5 * var(--p)) solid #fff; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; }
-  .cs-card.sel .ck { background: #007aff; }
-  .cs-card .ck svg { width: calc(12 * var(--p)); height: calc(12 * var(--p)); opacity: 0; }
-  .cs-card.sel .ck svg { opacity: 1; }
-  .cs-card .kind { position: absolute; left: calc(7 * var(--p)); bottom: calc(7 * var(--p)); font-size: calc(10 * var(--p)); font-weight: 700; letter-spacing: calc(0.4 * var(--p)); color: #fff; padding: calc(3 * var(--p)) calc(7 * var(--p)); border-radius: 100px; background: rgba(0,0,0,0.55); }
-  .cs-card .meta { padding: calc(8 * var(--p)) calc(10 * var(--p)) calc(10 * var(--p)); }
-  .cs-card .meta b { display: block; font-size: calc(13 * var(--p)); font-weight: 600; }
-  .cs-card .meta small { display: block; font-size: calc(11.5 * var(--p)); color: #8a8a8e; margin-top: calc(2 * var(--p)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .cs-opts { margin: calc(16 * var(--p)) calc(18 * var(--p)) calc(18 * var(--p)); background: #fff; border-radius: calc(11 * var(--p)); }
-  .cs-opts .lrow { font-size: calc(15 * var(--p)); min-height: calc(46 * var(--p)); justify-content: space-between; }
-  .cs-opts .lrow small { display: block; font-size: calc(12.5 * var(--p)); color: #8a8a8e; }
-  .tog { width: calc(51 * var(--p)); height: calc(31 * var(--p)); border-radius: 100px; background: #34c759; position: relative; flex: 0 0 auto; }
-  .tog::after { content: ""; position: absolute; right: calc(2 * var(--p)); top: calc(2 * var(--p)); width: calc(27 * var(--p)); height: calc(27 * var(--p)); border-radius: 50%; background: #fff; box-shadow: 0 calc(3 * var(--p)) calc(8 * var(--p)) rgba(0,0,0,0.15); }
+  /* CineStager import (CineStagerImportSheet) */
+  .cs-sheet { position: absolute; left: 50%; top: calc(150 * var(--p)); width: calc(740 * var(--p)); transform: translateX(-50%) translateY(calc(18 * var(--p))); background: #fff; border-radius: calc(14 * var(--p)); box-shadow: 0 calc(20 * var(--p)) calc(70 * var(--p)) rgba(0,0,0,0.3), 0 0 0 calc(0.5 * var(--p)) rgba(0,0,0,0.15); overflow: hidden; transition: transform 0.35s ease-out; }
+  .scene.on .cs-sheet { transform: translateX(-50%); }
+  .cs-head { position: relative; padding: calc(16 * var(--p)) calc(24 * var(--p)) calc(15 * var(--p)); border-bottom: calc(1 * var(--p)) solid #e5e5e5; }
+  .cs-head b { display: block; font-size: calc(20 * var(--p)); font-weight: 600; letter-spacing: -0.01em; }
+  .cs-head p { font-size: calc(12.5 * var(--p)); color: #6e6e73; margin-top: calc(4 * var(--p)); }
+  .cs-head .reload { position: absolute; right: calc(20 * var(--p)); top: calc(20 * var(--p)); width: calc(16 * var(--p)); height: calc(16 * var(--p)); color: #6e6e73; }
+  .cs-seg { display: inline-flex; margin: calc(12 * var(--p)) 0 0 calc(34 * var(--p)); padding: calc(1.5 * var(--p)); border-radius: calc(7 * var(--p)); background: #ececec; }
+  .cs-seg span { font-size: calc(13 * var(--p)); line-height: calc(21 * var(--p)); padding: 0 calc(12 * var(--p)); border-radius: calc(6 * var(--p)); min-width: calc(74 * var(--p)); text-align: center; color: #1d1d1f; }
+  .cs-seg span.on { background: #0a7aff; color: #fff; font-weight: 500; }
+  .cs-grid { height: calc(440 * var(--p)); overflow: hidden; display: grid; grid-template-columns: repeat(4, 1fr); column-gap: calc(14 * var(--p)); row-gap: calc(12 * var(--p)); padding: calc(16 * var(--p)) calc(24 * var(--p)) 0; align-content: start; }
+  .cs-shot .th { position: relative; aspect-ratio: 4 / 3; border-radius: calc(7 * var(--p)); background-size: cover; background-position: center; }
+  .cs-shot .raw { position: absolute; top: calc(6 * var(--p)); right: calc(6 * var(--p)); font-size: calc(10 * var(--p)); font-weight: 700; letter-spacing: calc(0.3 * var(--p)); color: #fff; padding: calc(2 * var(--p)) calc(6 * var(--p)); border-radius: calc(5 * var(--p)); background: rgba(0,0,0,0.6); }
+  .cs-shot small { display: block; font-size: calc(10.5 * var(--p)); color: #6e6e73; margin-top: calc(5 * var(--p)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cs-foot { display: flex; justify-content: flex-end; gap: calc(8 * var(--p)); padding: calc(12 * var(--p)) calc(16 * var(--p)) calc(14 * var(--p)); border-top: calc(1 * var(--p)) solid #e5e5e5; }
+  .cs-foot span { font-size: calc(13 * var(--p)); line-height: calc(24 * var(--p)); padding: 0 calc(12 * var(--p)); border-radius: calc(6 * var(--p)); background: #e8e8e8; color: #1d1d1f; }
+  .cs-foot span.add { background: #8bbcf7; color: #fff; padding: 0 calc(13 * var(--p)); }
 
   /* arrows: step through the highlights */
   .nav-arrow { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text); background: rgba(12,12,20,0.85); border: 1px solid var(--border); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.15s; }
@@ -436,19 +430,28 @@
       <div class="scene" data-scene="cinestager">
         <img class="bg" src="img/app/map.jpg" alt="" loading="lazy" decoding="async">
         <div class="veil"></div>
-        <div class="ios-sheet cs-sheet" role="img" aria-label="Import from CineStager: shots with their camera, lens, stop and map, and the film look for stills">
-          <div class="shead"><span>Cancel</span><b>Import from CineStager</b><span>Add 3 Shots</span></div>
-          <div class="orgrow"><span>Organize by</span><div class="seg-ios" style="width:calc(220 * var(--p))"><span class="on">Latest</span><span>Location</span></div></div>
-          <div class="shots-grid">
-            <div class="cs-card sel"><div class="th" style="background-image:url(img/app/cs-raw.jpg)"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.4 4.4L19 7.4"/></svg></span><span class="kind">FILM LOOK</span></div><div class="meta"><b>Viewfinder</b><small>Alexa 35 · 50mm · T2.8</small></div></div>
-            <div class="cs-card sel"><div class="th" style="background-image:url(img/app/cs-ar.jpg)"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.4 4.4L19 7.4"/></svg></span><span class="kind">AR</span></div><div class="meta"><b>Anna's Kitchen</b><small>FX9 · 35mm · camera 1.4 m</small></div></div>
-            <div class="cs-card sel"><div class="th" style="background-image:url(img/app/cs-map.jpg)"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.4 4.4L19 7.4"/></svg></span><span class="kind">VIDEO · ROUTE</span></div><div class="meta"><b>Anna's Kitchen</b><small>Camera route · 2 people</small></div></div>
-            <div class="cs-card"><div class="th" style="background-image:url(img/app/cs-bokeh.jpg)"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.4 4.4L19 7.4"/></svg></span><span class="kind">GAME</span></div><div class="meta"><b>Cellar</b><small>Super Baltar · 75mm · T2</small></div></div>
+        <div class="cs-sheet" role="img" aria-label="Import from CineStager: the shots you framed in CineStager, synced from iCloud, ready to add as new shots">
+          <div class="cs-head">
+            <b>Import from CineStager</b>
+            <p>Shots you framed in CineStager, synced from iCloud. Select one or more to add as new shots.</p>
+            <svg class="reload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M18.2 3.2v3.9h-3.9"/></svg>
+            <div class="cs-seg"><span class="on">Latest</span><span>Location</span></div>
           </div>
-          <div class="cs-opts">
-            <div class="lrow plain"><div>Also put them on the scene maps<small>Cameras and people where they stood</small></div><span class="tog"></span></div>
-            <div class="lrow plain"><div>Stills</div><div class="seg-ios" style="width:calc(230 * var(--p))"><span>Photo</span><span class="on">Film Look</span></div></div>
+          <div class="cs-grid">
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-bokeh.jpg)"></div><small>50mm · 4.6K 3:2 · AR</small></div>
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-ar1.jpg)"></div><small>21mm · 4K UHD 1.66 · AR</small></div>
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-game1.jpg)"></div><small>65mm · 8K 17:9 · Game</small></div>
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-canal1.jpg)"><span class="raw">RAW</span></div><small>40mm · 4.3K LF 16:9 · Viewfinder</small></div>
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-field.jpg)"><span class="raw">RAW</span></div><small>60mm · 4.3K LF 16:9 · Viewfinder</small></div>
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-game2.jpg)"></div><small>55mm · FF 8.6K 16:9 · Game</small></div>
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-canal2.jpg)"><span class="raw">RAW</span></div><small>40mm · 4.3K LF 16:9 · Viewfinder</small></div>
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-ar2.jpg)"></div><small>21mm · 4K UHD 1.66 · AR</small></div>
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-bokeh2.jpg)"></div><small>85mm · 4.6K 3:2 · AR</small></div>
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-canal3.jpg)"><span class="raw">RAW</span></div><small>28mm · 4.3K LF 16:9 · Viewfinder</small></div>
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-game3.jpg)"></div><small>65mm · 8K 17:9 · Game</small></div>
+            <div class="cs-shot"><div class="th" style="background-image:url(img/app/t-field2.jpg)"><span class="raw">RAW</span></div><small>32mm · 4.3K LF 16:9 · Viewfinder</small></div>
           </div>
+          <div class="cs-foot"><span>Cancel</span><span class="add">Add Shot</span></div>
         </div>
       </div>
 
