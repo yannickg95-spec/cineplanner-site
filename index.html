@@ -48,14 +48,16 @@
       "image": "https://cineplannerapp.com/icon.svg",
       "featureList": [
         "Side-by-side screenplay reader and shot list with automatic scene breakdown",
-        "Detailed shot logging: size, type, focal length, grip and exact camera gear",
+        "Shot logging: size, type, focal length, grip, camera, lens and reference frames, with camera details read from EXIF",
         "Visual script coverage with numbered, color-coded coverage lines in the margin",
-        "Overhead scene map with camera and actor markers, movement paths and satellite locations",
-        "Sun and daylight: sun direction and height with sunrise and sunset per location",
+        "Overhead scene map with cameras, cast, movement arrows, walls, furniture and 33 lights and grip pieces on satellite views, floor plans or scans",
+        "Sun and daylight per location: sun direction and height, sunrise, sunset and golden hour",
         "Strip-board shooting schedule: a board on Mac and iPad, a list on iPhone",
-        "On-Set mode with take logging and an iPhone Live Activity on the Lock Screen",
-        "Multi-version and episodic support, plus export to HTML, PDF and shareable live web links",
-        "iCloud sync between Mac and iPad, and CineStager AR import"
+        "On-Set mode with an iPhone Live Activity on the Lock Screen and Dynamic Island",
+        "Project sharing with your crew: can edit or view only, with recent changes",
+        "Publish to the web, or export a webpage, a PDF, a text file or the script with coverage",
+        "CineStager import: stills and video with lens, stop, focus, camera height, people, maps and film look; trains CineStager's Gaussian splats on the Mac",
+        "iCloud sync across Mac, iPad and iPhone; script versions and series"
       ],
       "author": {
         "@type": "Person",
@@ -90,217 +92,247 @@
     --surface: #0c0c14;
     --surface2: #111120;
     --border: #1a1a2e;
-    --cyan: #3ecfff;      /* CinePlanner accent — from the app logo */
-    --blue: #1a4aff;     /* secondary accent for gradients */
+    --cyan: #3ecfff;
+    --blue: #1a4aff;
     --text: #e8e8f5;
-    --muted: #6a6a8a;
-    --faint: #2a2a3e;
+    --muted: #7a7a9a;
   }
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: "DM Sans", sans-serif; font-weight: 300;
-    line-height: 1.7; overflow-x: hidden;
-  }
+  body { background: var(--bg); color: var(--text); font-family: "DM Sans", sans-serif; font-weight: 300; line-height: 1.6; overflow-x: hidden; }
+  img { max-width: 100%; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 
   /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    padding: 16px 48px; display: flex; justify-content: space-between; align-items: center;
-    background: linear-gradient(to bottom, rgba(5,5,10,0.97) 0%, transparent 100%);
-  }
-  .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-  .nav-logo img { height: 32px; width: 32px; border-radius: 8px; }
-  .nav-logo-name { font-family: "Unbounded", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; color: var(--text); }
-  .nav-links { display: flex; align-items: center; gap: 30px; list-style: none; }
-  .nav-right { display: flex; align-items: center; gap: 30px; }
-  .nav-links a { font-family: "DM Mono", monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 16px 48px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, rgba(5,5,10,0.97) 0%, transparent 100%); transition: background 0.3s, border-color 0.3s; border-bottom: 1px solid transparent; }
+  nav.scrolled { background: rgba(5,5,10,0.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom-color: var(--border); }
+  .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+  .nav-links a { font-family: "DM Mono", monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; white-space: nowrap; }
   .nav-links a:hover { color: var(--text); }
-  .nav-switch { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 100px; transition: border-color 0.2s !important; }
-  .nav-switch:hover { border-color: var(--cyan); }
-  .nav-cta { font-family: "DM Mono", monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; background: var(--cyan) !important; color: var(--bg) !important; padding: 9px 18px; border-radius: 100px; font-weight: 500 !important; transition: opacity 0.2s !important; white-space: nowrap; }
-  .nav-cta:hover { opacity: 0.85 !important; }
-
-  /* SITE SWITCH (CinePlanner / CineStager) */
+  .nav-cta { background: var(--cyan) !important; color: var(--bg) !important; padding: 8px 20px; border-radius: 100px; font-weight: 500 !important; }
   .site-switch { display: inline-flex; align-items: center; gap: 3px; padding: 4px; border: 1px solid var(--border); border-radius: 100px; background: rgba(12,12,20,0.6); backdrop-filter: blur(6px); }
   .site-switch a { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 8px; border-radius: 100px; text-decoration: none; transition: background 0.2s; }
   .site-switch img { height: 22px; width: 22px; border-radius: 6px; display: block; }
-  .site-switch .name { font-family: "Unbounded", sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.03em; }
+  .site-switch .name { font-family: "Unbounded", sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.03em; color: var(--text); }
   .site-switch .ss-active { background: var(--surface2); }
-  .site-switch .ss-active .name { color: var(--text); }
   .site-switch .ss-other .name { color: var(--muted); transition: color 0.2s; }
   .site-switch .ss-other:hover { background: rgba(62,207,255,0.08); }
   .site-switch .ss-other:hover .name { color: var(--text); }
-  @media (max-width: 560px) { .site-switch .name { display: none; } .site-switch a { padding: 6px; } }
 
   /* HERO */
-  .hero {
-    min-height: 100vh; display: flex; flex-direction: column;
-    justify-content: center; align-items: center; text-align: center;
-    padding: 120px 48px 80px; position: relative; overflow: hidden;
-  }
-  .hero-glow {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -60%); width: 1000px; height: 1000px;
-    background: radial-gradient(ellipse at center, rgba(62,207,255,0.10) 0%, rgba(26,74,255,0.05) 40%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero-icon {
-    width: min(220px, 45vw);
-    height: auto;
-    border-radius: 40px;
-    box-shadow: 0 0 80px rgba(62,207,255,0.25), 0 40px 80px rgba(0,0,0,0.6);
-    margin-bottom: 52px;
-    opacity: 0; animation: fadeUp 0.9s ease forwards 0.2s;
-  }
-  .hero-app-name { font-family: "Unbounded", sans-serif; font-size: clamp(18px, 2.5vw, 28px); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text); margin-top: -28px; margin-bottom: 80px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.4s; }
-  .hero-eyebrow { font-family: "DM Mono", monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan); margin-bottom: 40px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.5s; }
-  .hero-headline { font-family: "Unbounded", sans-serif; font-size: clamp(36px, 6vw, 76px); font-weight: 900; line-height: 1.0; letter-spacing: -0.025em; margin-bottom: 8px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.55s; }
-  .hero-headline-light { font-family: "Unbounded", sans-serif; font-size: clamp(36px, 6vw, 76px); font-weight: 300; line-height: 1.0; letter-spacing: -0.025em; color: var(--cyan); margin-bottom: 44px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.7s; }
-  .hero-sub { font-size: clamp(14px, 1.8vw, 17px); color: var(--muted); max-width: 500px; line-height: 1.85; margin-bottom: 48px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.85s; }
-  .hero-sub strong { color: var(--text); font-weight: 400; }
-  .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center; opacity: 0; animation: fadeUp 0.8s ease forwards 1.0s; }
-  .hero-note { font-family: "DM Mono", monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 18px; opacity: 0; animation: fadeUp 0.8s ease forwards 1.1s; }
-  .btn-primary { display: inline-flex; align-items: center; gap: 10px; background: var(--cyan); color: var(--bg); font-family: "DM Sans", sans-serif; font-size: 14px; font-weight: 500; padding: 14px 28px; border-radius: 100px; text-decoration: none; transition: opacity 0.2s, transform 0.2s; }
-  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
-  .btn-secondary { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-family: "DM Mono", monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: color 0.2s; padding: 14px 4px; }
-  .btn-secondary:hover { color: var(--text); }
+  .hero { text-align: center; padding: 140px 32px 0; position: relative; }
+  .hero-glow { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1100px; max-width: 100vw; height: 900px; background: radial-gradient(ellipse at center, rgba(62,207,255,0.10) 0%, rgba(26,74,255,0.05) 40%, transparent 70%); pointer-events: none; }
+  .hero h1 { position: relative; font-family: "Unbounded", sans-serif; font-size: clamp(34px, 6vw, 72px); font-weight: 900; line-height: 1.0; letter-spacing: -0.025em; }
+  .hero h1 span { display: block; font-weight: 300; color: var(--cyan); }
+  .hero-sub { position: relative; font-size: clamp(16px, 1.9vw, 19px); color: var(--muted); margin: 26px auto 34px; max-width: 560px; }
+  .hero-actions { position: relative; display: flex; gap: 22px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .price-note { font-family: "DM Mono", monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .price-note b { color: var(--text); font-weight: 500; }
+  .fade-up { opacity: 0; animation: fadeUp 0.8s ease forwards; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 
-  /* "Coming soon" store pill */
-  .store-soon { display: inline-flex; align-items: center; gap: 12px; padding: 11px 22px 11px 18px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
-  .store-soon svg { width: 22px; height: 22px; opacity: 0.9; }
-  .store-soon .ss-small { font-family: "DM Mono", monospace; font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cyan); display: block; }
-  .store-soon .ss-big { font-family: "Unbounded", sans-serif; font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.25; }
+  /* DEVICE: an iPad held sideways, its screen drawn in the app's own points (--p = 1 pt) */
+  .explorer { max-width: 1120px; margin: 64px auto 0; padding: 0 32px; position: relative; }
+  .device-wrap { position: relative; }
+  .device { background: #0a0a0e; border-radius: 40px; padding: 18px; border: 1px solid #23232f; box-shadow: 0 0 0 5px #0b0b12, 0 40px 120px rgba(0,0,0,0.7), 0 0 140px rgba(62,207,255,0.10); }
+  .screen { position: relative; aspect-ratio: 1366 / 1024; border-radius: 22px; overflow: hidden; background: #f2f2f7; container-type: inline-size; --p: calc(100cqw / 1366); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "DM Sans", system-ui, sans-serif; font-weight: 400; line-height: 1.25; color: #000; -webkit-font-smoothing: antialiased; }
+  .screen svg { display: block; }
+  .scene { position: absolute; inset: 0; opacity: 0; transition: opacity 0.45s ease; pointer-events: none; }
+  .scene.on { opacity: 1; pointer-events: auto; }
+  .scene > img.bg { position: absolute; left: 0; top: calc(88 * var(--p)); width: 100%; height: calc(936 * var(--p)); object-fit: cover; object-position: top; }
+  .veil { position: absolute; left: 0; right: 0; top: calc(88 * var(--p)); bottom: 0; background: rgba(0,0,0,0.2); }
 
-  .hero-scroll { position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeUp 0.8s ease forwards 1.5s; }
-  .hero-scroll span { font-family: "DM Mono", monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
-  .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--cyan), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+  /* status bar + toolbar (ProjectEditorView's toolbar) */
+  .chrome { position: absolute; left: 0; right: 0; top: 0; height: calc(88 * var(--p)); z-index: 10; background: #f2f2f7; }
+  .chrome::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.35s; pointer-events: none; z-index: 1; }
+  .screen.modal .chrome::after { opacity: 1; }
+  .sbar { position: absolute; left: calc(17 * var(--p)); right: calc(20 * var(--p)); top: calc(8 * var(--p)); height: calc(20 * var(--p)); display: flex; align-items: center; justify-content: space-between; font-size: calc(15 * var(--p)); font-weight: 600; letter-spacing: -0.01em; }
+  .sbar .date { font-weight: 500; margin-left: calc(9 * var(--p)); }
+  .sbar .right { display: flex; align-items: center; gap: calc(6 * var(--p)); }
+  .sbar svg { height: calc(13 * var(--p)); width: auto; }
+  .tbar { position: absolute; left: calc(9 * var(--p)); right: calc(15 * var(--p)); top: calc(32 * var(--p)); height: calc(46 * var(--p)); display: flex; align-items: center; justify-content: space-between; }
+  .back { width: calc(46 * var(--p)); height: calc(46 * var(--p)); border-radius: 50%; background: #fff; box-shadow: 0 calc(1 * var(--p)) calc(6 * var(--p)) rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: center; }
+  .back svg { width: calc(18 * var(--p)); height: calc(18 * var(--p)); }
+  .ttl { position: absolute; left: 50%; transform: translateX(-50%); font-size: calc(18 * var(--p)); font-weight: 600; }
+  .tools { display: flex; align-items: center; gap: calc(10 * var(--p)); }
+  .tbtn { position: relative; width: calc(36 * var(--p)); height: calc(36 * var(--p)); border-radius: 50%; background: #e5e5ea; display: flex; align-items: center; justify-content: center; color: #6e6e73; transition: background 0.25s, box-shadow 0.25s, color 0.25s, transform 0.12s; }
+  .tbtn svg { width: calc(20 * var(--p)); height: calc(20 * var(--p)); }
+  .tbtn img { width: calc(22 * var(--p)); height: calc(22 * var(--p)); border-radius: calc(5 * var(--p)); display: block; }
+  .tbtn.export { width: auto; height: calc(41 * var(--p)); padding: 0 calc(23 * var(--p)); border-radius: 100px; background: #d0e3f8; color: #007aff; font-size: calc(19 * var(--p)); font-weight: 500; margin-left: calc(2 * var(--p)); }
+  .tab { cursor: pointer; }
+  .tab:active { transform: scale(0.93); }
+  .tab:focus-visible { outline: 2px solid #3ecfff; outline-offset: 3px; }
+  .tbtn.on { z-index: 2; background: #fff; color: #007aff; box-shadow: 0 0 0 calc(2.5 * var(--p)) #3ecfff, 0 0 calc(16 * var(--p)) rgba(62,207,255,0.75); }
+  .tbtn.export.on { background: #007aff; color: #fff; }
 
-  /* SECTIONS */
-  .section-wrap { padding: 120px 48px; max-width: 1200px; margin: 0 auto; }
-  .section-label { font-family: "DM Mono", monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
-  .section-label::after { content: ""; flex: 1; max-width: 48px; height: 1px; background: var(--cyan); opacity: 0.4; }
-  .section-title { font-family: "Unbounded", sans-serif; font-size: clamp(26px, 3.5vw, 42px); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 16px; }
-  .section-sub { font-size: 15px; color: var(--muted); max-width: 480px; line-height: 1.8; }
+  /* tappable spots on the app itself: Shots | Scene Map, and the Script column */
+  .hot { position: absolute; z-index: 12; border-radius: calc(8 * var(--p)); transition: box-shadow 0.25s; }
+  .hot:hover { box-shadow: 0 0 0 calc(2 * var(--p)) rgba(62,207,255,0.45); }
+  .hot.on { box-shadow: 0 0 0 calc(2.5 * var(--p)) #3ecfff, 0 0 calc(16 * var(--p)) rgba(62,207,255,0.6); }
+  .hot.seg-shots { left: calc(447 * var(--p)); top: calc(134 * var(--p)); width: calc(83 * var(--p)); height: calc(34 * var(--p)); }
+  .hot.seg-map { left: calc(532 * var(--p)); top: calc(134 * var(--p)); width: calc(127 * var(--p)); height: calc(34 * var(--p)); }
+  .hot.script { left: calc(916 * var(--p)); top: calc(129 * var(--p)); width: calc(450 * var(--p)); height: calc(44 * var(--p)); border-radius: 0; }
+  .hot.script.on { box-shadow: none; }
+  .screen.modal .hot { visibility: hidden; }
 
-  /* TAGLINE STRIP */
-  .tagline-item { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
-  .tagline-num { font-family: "Unbounded", sans-serif; font-size: 11px; font-weight: 700; color: var(--cyan); }
-  .tagline-text { font-family: "DM Mono", monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  /* COVERAGE: the Script column, picked out */
+  .spot { position: absolute; left: 0; top: calc(88 * var(--p)); width: calc(915 * var(--p)); bottom: 0; background: rgba(5,5,10,0.5); }
+  .colring { position: absolute; left: calc(916 * var(--p)); right: 0; top: calc(129 * var(--p)); bottom: 0; box-shadow: inset 0 0 0 calc(3 * var(--p)) #3ecfff, inset 0 0 calc(30 * var(--p)) rgba(62,207,255,0.35); }
 
-  /* FEATURE ROWS (how it works) */
-  .feature-row { max-width: 1200px; margin: 0 auto; padding: 100px 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-  .fr-eyebrow { font-family: "DM Mono", monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
-  .fr-eyebrow span { display: block; width: 48px; height: 1px; background: var(--cyan); opacity: 0.4; }
-  .fr-emoji { font-size: 48px; margin-bottom: 16px; line-height: 1; }
-  .fr-title { font-family: "Unbounded", sans-serif; font-size: clamp(26px, 3.4vw, 42px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 20px; }
-  .fr-body { font-size: 16px; color: var(--muted); line-height: 1.8; max-width: 440px; }
-  .fr-list { list-style: none; margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
-  .fr-list li { font-size: 14px; color: var(--muted); display: flex; align-items: flex-start; gap: 10px; line-height: 1.6; }
-  .fr-list li::before { content: ""; margin-top: 8px; flex-shrink: 0; width: 6px; height: 6px; border-radius: 2px; background: linear-gradient(135deg, var(--cyan), var(--blue)); }
-  .fr-visual { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 24px 64px rgba(0,0,0,0.4); background: var(--surface); }
-  .fr-visual svg { width: 100%; height: auto; display: block; }
-  .fr-visual > img { width: 100%; height: auto; display: block; }
+  /* ON SET: the Live Activity, as the Lock Screen shows it */
+  .live { position: absolute; right: calc(28 * var(--p)); bottom: calc(26 * var(--p)); width: calc(560 * var(--p)); padding: calc(18 * var(--p)) calc(20 * var(--p)) calc(16 * var(--p)); border-radius: calc(26 * var(--p)); background: rgba(10,10,12,0.92); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); color: #fff; box-shadow: 0 calc(20 * var(--p)) calc(60 * var(--p)) rgba(0,0,0,0.45); transform: translateY(calc(16 * var(--p))); opacity: 0; transition: transform 0.5s ease 0.25s, opacity 0.5s ease 0.25s; }
+  .scene.on .live { transform: none; opacity: 1; }
+  .live .lbl { position: absolute; top: calc(-26 * var(--p)); right: calc(6 * var(--p)); font-size: calc(11 * var(--p)); font-weight: 600; letter-spacing: calc(1.4 * var(--p)); color: rgba(0,0,0,0.45); }
+  .live b.h { display: block; font-size: calc(20 * var(--p)); font-weight: 700; }
+  .live .s { font-size: calc(14 * var(--p)); color: rgba(255,255,255,0.55); margin-top: calc(2 * var(--p)); }
+  .live .bar { display: flex; align-items: center; gap: calc(12 * var(--p)); margin: calc(12 * var(--p)) 0 calc(10 * var(--p)); }
+  .live .ar { width: calc(38 * var(--p)); height: calc(38 * var(--p)); border-radius: 50%; background: rgba(10,132,255,0.2); color: #0a84ff; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+  .live .ar svg { width: calc(14 * var(--p)); height: calc(14 * var(--p)); }
+  .live .track { flex: 1; height: calc(8 * var(--p)); border-radius: 100px; background: rgba(255,255,255,0.14); overflow: hidden; }
+  .live .track i { display: block; height: 100%; width: 42%; border-radius: 100px; background: #0a84ff; }
+  .live .row { display: flex; align-items: center; gap: calc(10 * var(--p)); font-size: calc(15 * var(--p)); color: rgba(255,255,255,0.5); white-space: nowrap; }
+  .live .row + .row { margin-top: calc(6 * var(--p)); }
+  .live .num { font-size: calc(14 * var(--p)); font-weight: 700; padding: calc(3 * var(--p)) calc(8 * var(--p)); border-radius: calc(6 * var(--p)); background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+  .live .row.now .num { background: rgba(10,132,255,0.25); color: #0a84ff; }
+  .live .row.now b { color: #fff; font-weight: 600; }
+  .live .nowtag { display: block; font-size: calc(11 * var(--p)); font-weight: 700; letter-spacing: calc(0.6 * var(--p)); color: #0a84ff; margin: 0 0 calc(2 * var(--p)) calc(46 * var(--p)); }
 
-  /* USE CASES */
-  .usecases-wrap { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .usecases-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 64px; }
-  .usecase-card { border: 1px solid var(--border); border-radius: 12px; padding: 36px 40px; display: flex; gap: 20px; align-items: flex-start; background: var(--bg); transition: border-color 0.3s, background 0.3s; }
-  .usecase-card:hover { border-color: rgba(62,207,255,0.3); background: rgba(62,207,255,0.03); }
-  .usecase-icon { font-size: 26px; flex-shrink: 0; margin-top: 2px; }
-  .usecase-title { font-family: "Unbounded", sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 10px; }
-  .usecase-body { font-size: 15px; color: var(--muted); line-height: 1.8; }
+  /* iOS sheets (light) */
+  .ios-sheet { position: absolute; left: 50%; top: calc(110 * var(--p)); transform: translateX(-50%) translateY(calc(18 * var(--p))); background: #f2f2f7; border-radius: calc(18 * var(--p)); box-shadow: 0 calc(20 * var(--p)) calc(70 * var(--p)) rgba(0,0,0,0.3); overflow: hidden; transition: transform 0.35s ease-out; }
+  .scene.on .ios-sheet { transform: translateX(-50%); }
+  .shead { display: flex; align-items: center; height: calc(56 * var(--p)); padding: 0 calc(18 * var(--p)); font-size: calc(17 * var(--p)); }
+  .shead span { flex: 1; color: #007aff; } .shead span:last-child { text-align: right; font-weight: 600; }
+  .shead b { font-weight: 600; }
+  .sec { font-size: calc(13 * var(--p)); color: #6d6d72; text-transform: uppercase; letter-spacing: calc(0.2 * var(--p)); padding: calc(14 * var(--p)) calc(34 * var(--p)) calc(7 * var(--p)); }
+  .grp { margin: 0 calc(18 * var(--p)); background: #fff; border-radius: calc(11 * var(--p)); overflow: hidden; }
+  .lrow { display: flex; align-items: center; gap: calc(12 * var(--p)); min-height: calc(52 * var(--p)); padding: calc(6 * var(--p)) calc(16 * var(--p)); font-size: calc(17 * var(--p)); }
+  .lrow + .lrow { box-shadow: inset calc(64 * var(--p)) 0 0 #fff, inset 0 calc(0.6 * var(--p)) 0 #d1d1d6; }
+  .lrow.plain + .lrow.plain { box-shadow: inset calc(16 * var(--p)) 0 0 #fff, inset 0 calc(0.6 * var(--p)) 0 #d1d1d6; }
+  .av { width: calc(36 * var(--p)); height: calc(36 * var(--p)); border-radius: 50%; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; color: #fff; font-size: calc(14 * var(--p)); font-weight: 600; }
+  .lrow .who { flex: 1; } .lrow .who small { display: block; font-size: calc(13 * var(--p)); color: #8a8a8e; margin-top: calc(1 * var(--p)); }
+  .lrow .acc { font-size: calc(15 * var(--p)); color: #8a8a8e; display: flex; align-items: center; gap: calc(4 * var(--p)); }
+  .lrow .acc svg { width: calc(10 * var(--p)); height: calc(10 * var(--p)); }
+  .lrow.blue { color: #007aff; } .lrow.blue svg { width: calc(22 * var(--p)); height: calc(22 * var(--p)); }
+  .lrow .when { margin-left: auto; font-size: calc(14 * var(--p)); color: #8a8a8e; white-space: nowrap; }
+  .lrow .chg { font-size: calc(15 * var(--p)); } .lrow .chg b { font-weight: 600; }
+  .note { font-size: calc(13 * var(--p)); color: #8a8a8e; padding: calc(8 * var(--p)) calc(34 * var(--p)) calc(18 * var(--p)); }
 
-  /* FEATURES GRID */
-  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 64px; }
-  .feature-item { padding: 36px 40px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); transition: border-color 0.3s; }
-  .feature-item:hover { border-color: var(--faint); }
-  .feature-dot { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, rgba(62,207,255,0.15), rgba(26,74,255,0.15)); border: 1px solid rgba(62,207,255,0.2); margin-bottom: 18px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-  .feature-title { font-family: "Unbounded", sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 10px; }
-  .feature-body { font-size: 15px; color: var(--muted); line-height: 1.8; }
+  /* CineStager import */
+  .cs-sheet { width: calc(760 * var(--p)); }
+  .seg-ios { display: flex; padding: calc(2 * var(--p)); border-radius: calc(9 * var(--p)); background: rgba(118,118,128,0.12); }
+  .seg-ios span { flex: 1; text-align: center; font-size: calc(13 * var(--p)); font-weight: 500; line-height: calc(28 * var(--p)); border-radius: calc(7 * var(--p)); white-space: nowrap; padding: 0 calc(14 * var(--p)); }
+  .seg-ios span.on { background: #fff; box-shadow: 0 calc(3 * var(--p)) calc(8 * var(--p)) rgba(0,0,0,0.12); }
+  .orgrow { display: flex; align-items: center; justify-content: space-between; padding: calc(4 * var(--p)) calc(18 * var(--p)) calc(12 * var(--p)); font-size: calc(15 * var(--p)); color: #6d6d72; }
+  .shots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(12 * var(--p)); padding: 0 calc(18 * var(--p)); }
+  .cs-card { position: relative; background: #fff; border-radius: calc(12 * var(--p)); overflow: hidden; box-shadow: 0 0 0 calc(2.5 * var(--p)) transparent; }
+  .cs-card.sel { box-shadow: 0 0 0 calc(2.5 * var(--p)) #007aff; }
+  .cs-card .th { aspect-ratio: 4 / 3; background-size: cover; background-position: center; position: relative; }
+  .cs-card .ck { position: absolute; top: calc(7 * var(--p)); right: calc(7 * var(--p)); width: calc(22 * var(--p)); height: calc(22 * var(--p)); border-radius: 50%; border: calc(1.5 * var(--p)) solid #fff; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; }
+  .cs-card.sel .ck { background: #007aff; }
+  .cs-card .ck svg { width: calc(12 * var(--p)); height: calc(12 * var(--p)); opacity: 0; }
+  .cs-card.sel .ck svg { opacity: 1; }
+  .cs-card .kind { position: absolute; left: calc(7 * var(--p)); bottom: calc(7 * var(--p)); font-size: calc(10 * var(--p)); font-weight: 700; letter-spacing: calc(0.4 * var(--p)); color: #fff; padding: calc(3 * var(--p)) calc(7 * var(--p)); border-radius: 100px; background: rgba(0,0,0,0.55); }
+  .cs-card .meta { padding: calc(8 * var(--p)) calc(10 * var(--p)) calc(10 * var(--p)); }
+  .cs-card .meta b { display: block; font-size: calc(13 * var(--p)); font-weight: 600; }
+  .cs-card .meta small { display: block; font-size: calc(11.5 * var(--p)); color: #8a8a8e; margin-top: calc(2 * var(--p)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cs-opts { margin: calc(16 * var(--p)) calc(18 * var(--p)) calc(18 * var(--p)); background: #fff; border-radius: calc(11 * var(--p)); }
+  .cs-opts .lrow { font-size: calc(15 * var(--p)); min-height: calc(46 * var(--p)); justify-content: space-between; }
+  .cs-opts .lrow small { display: block; font-size: calc(12.5 * var(--p)); color: #8a8a8e; }
+  .tog { width: calc(51 * var(--p)); height: calc(31 * var(--p)); border-radius: 100px; background: #34c759; position: relative; flex: 0 0 auto; }
+  .tog::after { content: ""; position: absolute; right: calc(2 * var(--p)); top: calc(2 * var(--p)); width: calc(27 * var(--p)); height: calc(27 * var(--p)); border-radius: 50%; background: #fff; box-shadow: 0 calc(3 * var(--p)) calc(8 * var(--p)) rgba(0,0,0,0.15); }
 
-  /* ECOSYSTEM BAND */
-  .eco-wrap { border-top: 1px solid var(--border); background: linear-gradient(180deg, rgba(62,207,255,0.03), transparent 60%); }
-  .eco-inner { max-width: 1200px; margin: 0 auto; padding: 100px 48px; display: grid; grid-template-columns: 0.92fr 1.2fr; gap: 64px; align-items: center; }
-  .eco-eyebrow { font-family: "DM Mono", monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #3ecfff; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
-  .eco-eyebrow span { display: block; width: 48px; height: 1px; background: #3ecfff; opacity: 0.4; }
-  .eco-title { font-family: "Unbounded", sans-serif; font-size: clamp(26px, 3.4vw, 40px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.12; margin-bottom: 20px; }
-  .eco-body { font-size: 16px; color: var(--muted); line-height: 1.8; max-width: 460px; margin-bottom: 30px; }
-  .eco-cta { display: inline-flex; align-items: center; gap: 10px; font-family: "DM Sans", sans-serif; font-size: 14px; font-weight: 500; color: var(--bg); background: #3ecfff; padding: 13px 24px; border-radius: 100px; text-decoration: none; transition: opacity 0.2s, transform 0.2s; }
-  .eco-cta:hover { opacity: 0.88; transform: translateY(-1px); }
-  .eco-visual { display: flex; align-items: center; justify-content: center; gap: 16px; min-width: 0; }
-  .eco-visual img { height: 148px; width: auto; max-width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 16px 40px rgba(0,0,0,0.5); display: block; }
-  .eco-arrow { flex-shrink: 0; filter: drop-shadow(0 0 7px rgba(62,207,255,0.45)); }
-  @media (max-width: 560px) {
-    .eco-visual { flex-direction: column; gap: 14px; }
-    .eco-visual img { height: auto; width: 100%; max-width: 340px; }
-    .eco-arrow { transform: rotate(90deg); }
-  }
+  /* arrows: step through the highlights */
+  .nav-arrow { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text); background: rgba(12,12,20,0.85); border: 1px solid var(--border); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.15s; }
+  .nav-arrow:hover { color: var(--cyan); border-color: rgba(62,207,255,0.5); background: rgba(62,207,255,0.08); }
+  .nav-arrow:active { transform: scale(0.92); }
+  .nav-arrow:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  .nav-arrow svg { width: 18px; height: 18px; }
+  .nav-arrow.side { position: absolute; top: 50%; z-index: 5; margin-top: -22px; }
+  .nav-arrow.side.prev { left: -64px; } .nav-arrow.side.next { right: -64px; }
+  .nav-arrow.inline { display: none; width: 36px; height: 36px; } .nav-arrow.inline svg { width: 15px; height: 15px; }
+  .progress-row { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 26px; }
+  @media (max-width: 1240px) { .nav-arrow.side { display: none; } .nav-arrow.inline { display: flex; } }
 
-  /* MAKER STRIP (replaces testimonials pre-launch) */
-  .maker-wrap { border-top: 1px solid var(--border); }
-  .maker-inner { max-width: 900px; margin: 0 auto; padding: 110px 48px; text-align: center; }
-  .maker-quote { font-family: "Unbounded", sans-serif; font-size: clamp(20px, 2.8vw, 30px); font-weight: 300; line-height: 1.4; letter-spacing: -0.01em; color: var(--text); margin-bottom: 30px; }
-  .maker-quote b { font-weight: 700; color: var(--cyan); }
-  .maker-attr { font-family: "DM Mono", monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  /* caption under the device */
+  .caption { text-align: center; max-width: 640px; margin: 40px auto 0; min-height: 150px; }
+  .caption .kicker { font-family: "DM Mono", monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--cyan); }
+  .caption h2 { font-family: "Unbounded", sans-serif; font-size: clamp(24px, 3.2vw, 36px); font-weight: 700; letter-spacing: -0.015em; line-height: 1.15; margin: 10px 0 10px; }
+  .caption p { font-size: 17px; color: var(--muted); }
+  .chips { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .chip { font-family: "DM Mono", monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); border: 1px solid var(--border); background: var(--surface); border-radius: 100px; padding: 7px 13px; }
+  .caption-inner { transition: opacity 0.3s ease, transform 0.3s ease; }
+  .caption-inner.swap { opacity: 0; transform: translateY(8px); }
+  .progress { display: flex; justify-content: center; gap: 6px; }
+  .progress i { width: 22px; height: 3px; border-radius: 2px; background: var(--border); overflow: hidden; position: relative; }
+  .progress i.on::after { content: ""; position: absolute; inset: 0; background: var(--cyan); transform-origin: left; animation: fill var(--dur, 6s) linear forwards; }
+  .progress.paused i.on::after { animation: none; transform: none; }
+  @keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
-  /* CTA */
-  .cta-wrap { border-top: 1px solid var(--border); }
-  .cta-inner { max-width: 1200px; margin: 0 auto; padding: 120px 48px; text-align: center; position: relative; overflow: hidden; }
-  .cta-glow { position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse at center, rgba(62,207,255,0.08) 0%, transparent 70%); pointer-events: none; }
-  .cta-icon { width: min(130px, 30vw); height: auto; border-radius: 28px; margin: 0 auto 40px; display: block; box-shadow: 0 0 60px rgba(62,207,255,0.2), 0 20px 60px rgba(0,0,0,0.5); }
-  .cta-title { font-family: "Unbounded", sans-serif; font-size: clamp(30px, 5vw, 60px); font-weight: 900; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 20px; }
-  .cta-title span { color: var(--cyan); }
-  .cta-sub { font-size: 15px; color: var(--muted); margin-bottom: 40px; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.75; }
-  .cta-badge { display: inline-block; font-family: "DM Mono", monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-top: 22px; padding: 8px 16px; border: 1px solid var(--border); border-radius: 100px; }
+  /* CREW: a scrolling line of who it's for */
+  .crew { margin: 110px 0 0; overflow: hidden; padding: 6px 0 34px; -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent); }
+  .crew-track { display: flex; width: max-content; animation: crew 42s linear infinite; }
+  .crew:hover .crew-track { animation-play-state: paused; }
+  .crew-set { display: flex; align-items: center; gap: 40px; padding-right: 40px; }
+  .crew .word { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.05em; color: #fff; opacity: 0.45; white-space: nowrap; }
+  .crew .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); opacity: 0.7; flex: 0 0 auto; }
+  @keyframes crew { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .crew-track { animation: none; } }
 
-  /* FOOTER */
-  footer { border-top: 1px solid var(--border); padding: 36px 48px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  /* NUMBERS */
+  .numbers { max-width: 1056px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .num { padding: 34px 24px; text-align: center; }
+  .num + .num { border-left: 1px solid var(--border); }
+  .num b { display: block; font-family: "Unbounded", sans-serif; font-size: clamp(28px, 3.6vw, 42px); font-weight: 900; letter-spacing: -0.02em; }
+  .num span { font-family: "DM Mono", monospace; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+  /* LINK TO FEATURES */
+  .more { text-align: center; margin-top: 90px; }
+  .more-btn { display: inline-flex; align-items: center; gap: 12px; font-family: "DM Mono", monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text); text-decoration: none; border: 1px solid rgba(62,207,255,0.5); background: rgba(62,207,255,0.08); padding: 16px 30px; border-radius: 100px; box-shadow: 0 0 30px rgba(62,207,255,0.12); transition: background 0.2s, box-shadow 0.2s, transform 0.2s; }
+  .more-btn:hover { background: rgba(62,207,255,0.16); box-shadow: 0 0 40px rgba(62,207,255,0.25); transform: translateY(-1px); }
+  .more-btn span { color: var(--cyan); font-size: 16px; transition: transform 0.2s; }
+  .more-btn:hover span { transform: translateX(4px); }
+
+  /* PRICE + CTA */
+  .cta { max-width: 1120px; margin: 50px auto 0; padding: 0 32px; }
+  .cta-box { position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: 28px; padding: 70px 40px; text-align: center; background: radial-gradient(ellipse at 50% 120%, rgba(62,207,255,0.14), transparent 60%), var(--surface); }
+  .cta-box img.icon { width: 96px; border-radius: 22px; box-shadow: 0 0 50px rgba(62,207,255,0.25); margin-bottom: 30px; }
+  .cta-box h2 { font-family: "Unbounded", sans-serif; font-size: clamp(28px, 4.4vw, 52px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.05; }
+  .cta-box h2 span { display: block; font-weight: 300; color: var(--cyan); }
+  .cta-box p { color: var(--muted); font-size: 16px; margin: 20px 0 32px; }
+  .cta-links { margin-top: 26px; display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
+  .cta-links a { font-family: "DM Mono", monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+  .cta-links a:hover { color: var(--text); }
+
+  footer { margin-top: 100px; border-top: 1px solid var(--border); padding: 32px 48px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
   .footer-brand { display: flex; align-items: center; gap: 10px; }
-  .footer-brand img { height: 32px; width: 32px; border-radius: 7px; }
-  .footer-brand span { font-family: "Unbounded", sans-serif; font-size: 11px; font-weight: 700; color: var(--text); }
-  .footer-links { display: flex; gap: 28px; list-style: none; flex-wrap: wrap; }
-  .footer-links a { font-family: "DM Mono", monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-brand img { height: 28px; width: 28px; border-radius: 7px; }
+  .footer-brand span { font-family: "Unbounded", sans-serif; font-size: 11px; font-weight: 700; }
+  .footer-links { display: flex; gap: 26px; list-style: none; flex-wrap: wrap; }
+  .footer-links a { font-family: "DM Mono", monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
   .footer-links a:hover { color: var(--text); }
   .footer-copy { font-family: "DM Mono", monospace; font-size: 10px; letter-spacing: 0.08em; color: var(--muted); }
 
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes scrollPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-
-  /* HERO device trio */
-  .hero-screens { display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: nowrap; overflow: hidden; margin-top: 48px; opacity: 0; animation: fadeUp 0.8s ease forwards 1.4s; }
-  .hero-screens .hs-frame { border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 24px 64px rgba(0,0,0,0.6); overflow: hidden; background: var(--surface); flex-shrink: 0; }
-  .hero-screens .hs-side { box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
-  .hero-screens svg { display: block; }
-
-  @media (max-width: 1000px) {
-    .eco-inner { grid-template-columns: 1fr; gap: 40px; }
+  @media (max-width: 760px) {
+    nav { padding: 14px 18px; }
+    .nav-links li:not(:last-child) { display: none; }
+    .site-switch .name { display: none; } .site-switch a { padding: 6px; }
+    .hero { padding: 110px 22px 0; }
+    .explorer { padding: 0 14px; margin-top: 48px; }
+    .device { border-radius: 22px; padding: 9px; box-shadow: 0 0 0 3px #0b0b12, 0 30px 80px rgba(0,0,0,0.7); }
+    .screen { border-radius: 13px; }
+    .caption { margin-top: 26px; min-height: 190px; }
+    .crew { margin-top: 70px; } .crew-set { gap: 28px; padding-right: 28px; } .crew .word { font-size: 13px; }
+    .numbers { grid-template-columns: 1fr 1fr; margin: 0 14px; }
+    .num:nth-child(3) { border-left: 0; }
+    .num:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+    .more { margin-top: 70px; }
+    .cta { padding: 0 14px; }
+    .cta-box { padding: 54px 22px; border-radius: 22px; }
+    footer { padding: 28px 22px; flex-direction: column; align-items: flex-start; }
   }
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
-    .nav-links { display: none; }
-    .hero { padding: 100px 24px 80px; }
-    .section-wrap { padding: 80px 24px; }
-    .feature-row { grid-template-columns: 1fr !important; gap: 40px; padding: 70px 24px; }
-    .feature-row.reverse .fr-visual { order: -1; }
-    .usecases-grid { grid-template-columns: 1fr; }
-    .features-grid { grid-template-columns: 1fr 1fr; }
-    .eco-inner { padding: 80px 24px; }
-    .maker-inner { padding: 80px 24px; }
-    .cta-inner { padding: 80px 24px; }
-    footer { padding: 28px 24px; flex-direction: column; align-items: flex-start; }
-  }
-  @media (max-width: 680px) {
-    /* Mobile hero: show a single, legible device instead of the clipped trio */
-    .hero-screens { gap: 0; overflow: visible; }
-    .hero-screens > div:first-child,
-    .hero-screens > div:nth-child(2) { display: none; }
-    .hero-screens > div:last-child img { height: min(440px, 62vh) !important; }
-  }
-  @media (max-width: 560px) {
-    .features-grid { grid-template-columns: 1fr; }
-    .hero-actions { flex-direction: column; }
+  @media (prefers-reduced-motion: reduce) {
+    .fade-up { animation: none; opacity: 1; }
+    .scene, .caption-inner, .live, .ios-sheet { transition: none; }
   }
 </style>
 </head>
@@ -308,281 +340,271 @@
 
 <nav>
   <div class="site-switch" role="group" aria-label="Switch between CinePlanner and CineStager">
-    <a href="#" class="ss-active" aria-current="page">
-      <img src="icon.svg" alt="CinePlanner"><span class="name">CinePlanner</span>
-    </a>
-    <a href="https://cinestager.com" class="ss-other" title="Go to CineStager">
-      <img src="img/cinestager-icon.svg" alt="CineStager"><span class="name">CineStager</span>
-    </a>
+    <a href="#" class="ss-active" aria-current="page"><img src="icon.svg" alt="CinePlanner"><span class="name">CinePlanner</span></a>
+    <a href="https://cinestager.com" class="ss-other" title="Go to CineStager"><img src="img/cinestager-icon.svg" alt="CineStager"><span class="name">CineStager</span></a>
   </div>
-  <div class="nav-right">
-    <ul class="nav-links">
-      <li><a href="#how">How it works</a></li>
-      <li><a href="#onset">On set</a></li>
-      <li><a href="#features">Features</a></li>
-      <li><a href="#who">Who it's for</a></li>
-    </ul>
-    <a href="https://apps.apple.com/nl/app/cineplanner/id6800298885" target="_blank" rel="noopener" class="nav-cta">Get the app</a>
-  </div>
+  <ul class="nav-links">
+    <li><a href="#inside">Inside the app</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="https://apps.apple.com/nl/app/cineplanner/id6800298885" class="nav-cta">Get the app</a></li>
+  </ul>
 </nav>
 
-<div class="hero">
+<header class="hero">
   <div class="hero-glow"></div>
-  <img src="icon.svg" alt="CinePlanner" class="hero-icon">
-  <div class="hero-app-name">CINEPLANNER</div>
-  <h1 class="hero-headline">From script to set —<span class="hero-headline-light" style="display:block;">in one app.</span></h1>
-  <p class="hero-sub">Read your <strong>script</strong> beside your shot list, block scenes on a map, and carry the whole plan onto set — <strong>live</strong>.</p>
-  <div class="hero-actions">
-    <a href="https://apps.apple.com/nl/app/cineplanner/id6800298885" target="_blank" rel="noopener" style="display:inline-block; line-height:0;">
-      <img src="appstore.svg" alt="Download CinePlanner on the App Store" style="height:48px; width:auto;">
-    </a>
-    <a href="#how" class="btn-secondary">See how it works →</a>
+  <h1 class="fade-up" style="animation-delay:.1s">From script to set.<span>In one app.</span></h1>
+  <p class="hero-sub fade-up" style="animation-delay:.3s">Read the script, plan every shot, block it on a map and run the day — on Mac, iPad and iPhone.</p>
+  <div class="hero-actions fade-up" style="animation-delay:.5s">
+    <a href="https://apps.apple.com/nl/app/cineplanner/id6800298885" style="line-height:0"><img src="appstore.svg" alt="Download on the App Store" style="height:50px;width:auto"></a>
+    <div class="price-note"><b>7 days free</b> · then a one-time unlock</div>
   </div>
-  <p class="hero-note">Free to try for 7 days · then a one-time unlock</p>
+</header>
 
-  <div class="hero-screens">
-    <!-- iPad scene map (side, device-framed) -->
-    <div style="flex-shrink:0;">
-      <img src="img/hero-ipad-frame.png" alt="CinePlanner Scene Map on iPad" style="height:236px;width:auto;display:block;filter:drop-shadow(0 22px 44px rgba(0,0,0,0.55));">
-    </div>
-    <!-- Mac main view (center, hero) -->
-    <div style="flex-shrink:0;">
-      <img src="img/hero-mac-main.png" alt="CinePlanner on Mac: scenes, shot list and script" style="height:280px;width:auto;display:block;filter:drop-shadow(0 18px 40px rgba(0,0,0,0.45));">
-    </div>
-    <!-- iPhone On-Set (side, device-framed) -->
-    <div style="flex-shrink:0;">
-      <img src="img/hero-iphone-frame.png" alt="On-Set mode on iPhone" style="height:288px;width:auto;display:block;filter:drop-shadow(0 22px 44px rgba(0,0,0,0.55));">
-    </div>
-  </div>
+<!-- INSIDE THE APP: tap a button in the app's toolbar, the screen and caption change -->
+<section class="explorer fade-up" style="animation-delay:.7s" id="inside" aria-label="Inside the app">
+  <div class="device-wrap">
+  <button class="nav-arrow side prev" data-step="-1" aria-label="Previous highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5l-7 7 7 7"/></svg></button>
+  <button class="nav-arrow side next" data-step="1" aria-label="Next highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 5l7 7-7 7"/></svg></button>
+  <div class="device">
+    <div class="screen" id="screen">
 
-</div>
+      <!-- SHOTS -->
+      <div class="scene" data-scene="shots">
+        <img class="bg" src="img/app/shots.jpg" alt="CinePlanner on iPad: scenes, the shot list with a shot's setup, and the script with coverage lines" decoding="async">
+      </div>
 
-<!-- TAGLINE STRIP -->
-<div style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 28px 48px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center;">
-  <div style="font-family: 'Unbounded', sans-serif; font-size: clamp(20px, 3vw, 32px); font-weight: 900; letter-spacing: -0.01em; color: var(--text);">
-    Break it down. Block it. <span style="color: var(--cyan);">Shoot it.</span>
-  </div>
-  <div style="display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;">
-    <div class="tagline-item"><span class="tagline-num">01</span><span class="tagline-text">Break down the script</span></div>
-    <div class="tagline-item"><span class="tagline-num">02</span><span class="tagline-text">Mark script coverage</span></div>
-    <div class="tagline-item"><span class="tagline-num">03</span><span class="tagline-text">Block &amp; schedule</span></div>
-    <div class="tagline-item"><span class="tagline-num">04</span><span class="tagline-text">Shoot with On-Set mode</span></div>
-    <div class="tagline-item"><span class="tagline-num">✦</span><span class="tagline-text">Built by a filmmaker</span></div>
-  </div>
-</div>
+      <!-- COVERAGE: the Script column -->
+      <div class="scene" data-scene="script">
+        <img class="bg" src="img/app/shots2.jpg" alt="The screenplay beside the shot list, each shot's coverage drawn as a numbered line in the margin" loading="lazy" decoding="async">
+        <div class="spot"></div><div class="colring"></div>
+      </div>
 
-<!-- HOW IT WORKS -->
-<div style="border-top: 1px solid var(--border);" id="how">
+      <!-- SCENE MAP -->
+      <div class="scene" data-scene="map">
+        <img class="bg" src="img/app/map.jpg" alt="The scene map: cameras and cast on a satellite view of the location" loading="lazy" decoding="async">
+      </div>
 
-  <!-- 1. Import script — text left -->
-  <div class="feature-row" style="grid-template-columns:0.82fr 1.18fr;">
-    <div>
-      <div class="fr-eyebrow">Script-to-shot breakdown <span></span></div>
-      <div class="fr-emoji">📄</div>
-      <h2 class="fr-title">Read your script beside your shot list.</h2>
-      <p class="fr-body">Import your screenplay PDF and view it directly alongside your shot list. Scenes are organized automatically with location headers, INT/EXT tags, DAY/NIGHT indicators and shot counters — so you break the page down without ever leaving it.</p>
-      <ul class="fr-list">
-        <li>Side-by-side screenplay reader and shot list</li>
-        <li>Automatic scene breakdown with INT/EXT and DAY/NIGHT</li>
-        <li>Per-scene shot counters keep coverage at a glance</li>
-      </ul>
-    </div>
-    <div class="fr-visual" style="background:transparent;border:none;box-shadow:none;overflow:visible;">
-      <img src="img/row-breakdown-frame.png" alt="CinePlanner on iPad: scenes, shot setup, camera info, script coverage and script" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;filter:drop-shadow(0 22px 48px rgba(0,0,0,0.5));">
-    </div>
-  </div>
+      <!-- SCHEDULE -->
+      <div class="scene" data-scene="schedule">
+        <img class="bg" src="img/app/schedule.jpg" alt="The shooting schedule: scenes as strips on a board of shoot days, with sunrise, sunset and golden hour" loading="lazy" decoding="async">
+      </div>
 
-  <!-- 2. Shot list — visual left -->
-  <div style="border-top: 1px solid var(--border); background: var(--surface);">
-  <div class="feature-row reverse" style="grid-template-columns:1.18fr 0.82fr;">
-    <div class="fr-visual">
-      <img src="img/row-shotlogging.jpg" alt="Shot setup: size, type, focal length, grip and camera information" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;">
-    </div>
-    <div>
-      <div class="fr-emoji">🎬</div>
-      <h2 class="fr-title">Log every shot, the way you shoot.</h2>
-      <p class="fr-body">Specify shot size (Close Up, Wide…), shot type (Single, OTS, Top Shot), focal lengths and the exact camera gear — and choose the grip that puts it there.</p>
-      <ul class="fr-list">
-        <li>Grip setups: Tripod, Handheld, Dolly, Steadicam, Gimbal, Crane</li>
-        <li>Attach lookbook, previz or location reference frames</li>
-        <li>Log bodies, lens sets, focal lengths, aspect ratios and formats</li>
-        <li>Camera metadata reads itself from your reference photos' EXIF</li>
-      </ul>
-    </div>
-  </div>
-  </div>
+      <!-- ON SET + the Live Activity -->
+      <div class="scene" data-scene="onset">
+        <img class="bg" src="img/app/onset.jpg" alt="On Set mode: the day's shots, ticked off one by one, with the current shot marked Now" loading="lazy" decoding="async">
+        <div class="live" aria-hidden="true">
+          <span class="lbl">LOCK SCREEN</span>
+          <b class="h">Defrost · Day 2</b>
+          <div class="s">5 / 12 setups · 1 of 4 scenes</div>
+          <div class="bar">
+            <span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5l-7 7 7 7"/></svg></span>
+            <span class="track"><i></i></span>
+            <span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 5l7 7-7 7"/></svg></span>
+          </div>
+          <span class="nowtag">NOW · SCENE 6</span>
+          <div class="row now"><span class="num">6.2</span><b>Anna and Clerk</b> · WS · Two Shot · 35mm · Tripod</div>
+          <div class="row"><span class="num">2.1</span>Anna walks in · XWS · 20mm · Tripod</div>
+        </div>
+      </div>
 
-  <!-- 2b. Visual Script Coverage — signature feature -->
-  <div style="border-top: 1px solid var(--border); position: relative; overflow: hidden;">
-  <div style="position:absolute; top:-120px; left:-80px; width:520px; height:520px; background: radial-gradient(ellipse at center, rgba(62,207,255,0.07), transparent 70%); pointer-events:none;"></div>
-  <div class="feature-row reverse" style="grid-template-columns:1.18fr 0.82fr;">
-    <div class="fr-visual" style="background:transparent;border:none;box-shadow:none;overflow:visible;display:flex;justify-content:center;">
-      <img src="img/row-coverage.jpg" alt="A script page with numbered, color-coded coverage lines in the margin" loading="lazy" decoding="async" style="max-height:560px;max-width:100%;width:auto;height:auto;display:block;border-radius:3px;box-shadow:0 18px 44px rgba(0,0,0,0.5);">
-    </div>
-    <div>
-      <div class="fr-eyebrow">Signature feature <span></span></div>
-      <div class="fr-emoji">🖍️</div>
-      <h2 class="fr-title">See what covers<br>every line.</h2>
-      <p class="fr-body">Highlight passages of dialogue or action in the built-in screenplay reader, and CinePlanner draws thin vertical coverage lines in the margin — numbered and color-coded to each shot. It's an instant visual map of which camera setups cover which lines.</p>
-      <ul class="fr-list">
-        <li>Tap-to-select word picker to mark the script</li>
-        <li>Color-coded, numbered coverage lines per shot</li>
-        <li>Spot uncovered lines before you step on set</li>
-      </ul>
-    </div>
-  </div>
-  </div>
+      <!-- SHARE: project sharing -->
+      <div class="scene" data-scene="share">
+        <img class="bg" src="img/app/shots.jpg" alt="" loading="lazy" decoding="async">
+        <div class="veil"></div>
+        <div class="ios-sheet" style="width:calc(540 * var(--p))" role="img" aria-label="Sharing a project: the people in it, what each may do, and the recent changes">
+          <div class="shead"><span></span><b>Share “Defrost”</b><span>Done</span></div>
+          <div class="sec">People</div>
+          <div class="grp">
+            <div class="lrow"><span class="av" style="background:#3ecfff">YG</span><div class="who">Yannick Giraud<small>Owner · you</small></div></div>
+            <div class="lrow"><span class="av" style="background:#af52de">MV</span><div class="who">Maria de Vries<small>1st AD</small></div><span class="acc">Can Edit <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9l5-5 5 5M7 15l5 5 5-5"/></svg></span></div>
+            <div class="lrow"><span class="av" style="background:#ff9500">TB</span><div class="who">Tom Bakker<small>Gaffer · Joined</small></div><span class="acc">View Only <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9l5-5 5 5M7 15l5 5 5-5"/></svg></span></div>
+            <div class="lrow blue"><span class="av" style="background:none;color:#007aff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="8" r="3.6"/><path d="M3.5 19.5c.6-3.6 3.2-5.6 6.5-5.6 1.6 0 3 .4 4.1 1.2M18.5 13v7M15 16.5h7"/></svg></span>Invite People…</div>
+          </div>
+          <div class="sec">Recent Changes</div>
+          <div class="grp">
+            <div class="lrow plain"><span class="chg"><b>Maria</b> added shot 5.5</span><span class="when">2 min ago</span></div>
+            <div class="lrow plain"><span class="chg"><b>Maria</b> moved Scene 7 to Day 3</span><span class="when">1 h ago</span></div>
+            <div class="lrow plain"><span class="chg"><b>Tom</b> joined the project</span><span class="when">Yesterday</span></div>
+          </div>
+          <div class="note">Everyone works in the same project, through iCloud.</div>
+        </div>
+      </div>
 
-  <!-- 3. Scene map — text left -->
-  <div style="border-top: 1px solid var(--border);">
-  <div class="feature-row" style="grid-template-columns:0.82fr 1.18fr;">
-    <div>
-      <div class="fr-emoji">🗺️</div>
-      <h2 class="fr-title">Block it on an<br>overhead map.</h2>
-      <p class="fr-body">Place camera icons, actor markers and floor-plan maps to plan scenes in 2D, and draw actor and camera moves across the map to communicate complex blocking to your crew. Drop a real satellite map under any scene, pan to your exact location and set which way is North.</p>
-      <ul class="fr-list">
-        <li>Movement paths for actors and cameras</li>
-        <li>Satellite locations with a North reference</li>
-        <li>Sun &amp; daylight: scrub the day to see the sun's direction and height, with sunrise and sunset times</li>
-      </ul>
-    </div>
-    <div class="fr-visual" style="background:transparent;border:none;box-shadow:none;overflow:visible;">
-      <img src="img/row-scenemap.png" alt="Overhead scene map with camera and actor markers over a satellite location" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;filter:drop-shadow(0 18px 44px rgba(0,0,0,0.45));">
-    </div>
-  </div>
-  </div>
+      <!-- EXPORT -->
+      <div class="scene" data-scene="export">
+        <img class="bg" src="img/app/export.jpg" alt="Export Shot List: publish to the web, or export a webpage, a PDF, a text file or the script with coverage" loading="lazy" decoding="async">
+      </div>
 
-  <!-- 4. Schedule — visual left -->
-  <div style="border-top: 1px solid var(--border); background: var(--surface);">
-  <div class="feature-row reverse">
-    <div class="fr-visual">
-      <img src="img/row-schedule.jpg" alt="Strip-board shooting schedule with days and golden-hour times" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;">
-    </div>
-    <div>
-      <div class="fr-emoji">🗓️</div>
-      <h2 class="fr-title">Build the day on a strip board.</h2>
-      <p class="fr-body">Arrange scenes into shooting days in shoot order, split a scene across days, and drag strips between days to build the plan. It's a board on Mac and iPad, and a list on iPhone — the same schedule, wherever you are.</p>
-      <ul class="fr-list">
-        <li>Drag strips between days; split a scene across days</li>
-        <li>Order scenes exactly the way you'll shoot them</li>
-        <li>A board on Mac &amp; iPad, a list on iPhone</li>
-      </ul>
+      <!-- FROM CINESTAGER -->
+      <div class="scene" data-scene="cinestager">
+        <img class="bg" src="img/app/map.jpg" alt="" loading="lazy" decoding="async">
+        <div class="veil"></div>
+        <div class="ios-sheet cs-sheet" role="img" aria-label="Import from CineStager: shots with their camera, lens, stop and map, and the film look for stills">
+          <div class="shead"><span>Cancel</span><b>Import from CineStager</b><span>Add 3 Shots</span></div>
+          <div class="orgrow"><span>Organize by</span><div class="seg-ios" style="width:calc(220 * var(--p))"><span class="on">Latest</span><span>Location</span></div></div>
+          <div class="shots-grid">
+            <div class="cs-card sel"><div class="th" style="background-image:url(img/app/cs-raw.jpg)"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.4 4.4L19 7.4"/></svg></span><span class="kind">FILM LOOK</span></div><div class="meta"><b>Viewfinder</b><small>Alexa 35 · 50mm · T2.8</small></div></div>
+            <div class="cs-card sel"><div class="th" style="background-image:url(img/app/cs-ar.jpg)"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.4 4.4L19 7.4"/></svg></span><span class="kind">AR</span></div><div class="meta"><b>Anna's Kitchen</b><small>FX9 · 35mm · camera 1.4 m</small></div></div>
+            <div class="cs-card sel"><div class="th" style="background-image:url(img/app/cs-map.jpg)"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.4 4.4L19 7.4"/></svg></span><span class="kind">VIDEO · ROUTE</span></div><div class="meta"><b>Anna's Kitchen</b><small>Camera route · 2 people</small></div></div>
+            <div class="cs-card"><div class="th" style="background-image:url(img/app/cs-bokeh.jpg)"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.4 4.4L19 7.4"/></svg></span><span class="kind">GAME</span></div><div class="meta"><b>Cellar</b><small>Super Baltar · 75mm · T2</small></div></div>
+          </div>
+          <div class="cs-opts">
+            <div class="lrow plain"><div>Also put them on the scene maps<small>Cameras and people where they stood</small></div><span class="tog"></span></div>
+            <div class="lrow plain"><div>Stills</div><div class="seg-ios" style="width:calc(230 * var(--p))"><span>Photo</span><span class="on">Film Look</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THE APP'S TOOLBAR: its buttons switch the highlights -->
+      <div class="chrome">
+        <div class="sbar" aria-hidden="true"><span>9:41<span class="date">Tue 5 Jan</span></span><span class="right"><svg viewBox="0 0 18 13" fill="#000"><path d="M9 2.6c2.4 0 4.6.9 6.3 2.5l1.3-1.3C14.6 1.9 11.9.8 9 .8S3.4 1.9 1.4 3.8l1.3 1.3C4.4 3.5 6.6 2.6 9 2.6zm0 3.6c1.4 0 2.7.5 3.7 1.4l1.3-1.3C12.6 5 10.9 4.4 9 4.4S5.4 5 4 6.3l1.3 1.3c1-.9 2.3-1.4 3.7-1.4zm0 3.5c-.6 0-1.1.2-1.5.6L9 11.9l1.5-1.6c-.4-.4-.9-.6-1.5-.6z"/></svg>100%<svg viewBox="0 0 27 13" fill="none"><rect x=".6" y=".6" width="22.8" height="11.8" rx="3.4" stroke="#000" stroke-opacity=".4"/><rect x="2.3" y="2.3" width="19.4" height="8.4" rx="2" fill="#000"/><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="#000" fill-opacity=".4"/></svg></span></div>
+        <div class="tbar">
+          <span class="back" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4.5L7.5 12l7.5 7.5"/></svg></span>
+          <span class="ttl">Defrost</span>
+          <div class="tools" role="tablist" aria-label="Highlights">
+            <button class="tbtn tab" role="tab" data-tab="cinestager" aria-label="From CineStager"><img src="img/cinestager-icon.svg" alt=""></button>
+            <button class="tbtn tab" role="tab" data-tab="onset" aria-label="On Set mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.2"/><path d="M7 4.5v15M17 4.5v15M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/></svg></button>
+            <button class="tbtn tab" role="tab" data-tab="schedule" aria-label="Shooting schedule"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2.6"/><path d="M3 9h18M8 2.8v3.4M16 2.8v3.4"/><g fill="currentColor" stroke="none"><circle cx="7.5" cy="12.6" r="1"/><circle cx="12" cy="12.6" r="1"/><circle cx="16.5" cy="12.6" r="1"/><circle cx="7.5" cy="16.6" r="1"/><circle cx="12" cy="16.6" r="1"/></g></svg></button>
+            <button class="tbtn tab" role="tab" data-tab="share" aria-label="Share the project"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 19.5c.5-3.5 3-5.5 6.2-5.5s5.7 2 6.2 5.5"/><circle cx="16.8" cy="8.8" r="2.7"/><path d="M17.2 14.1c2.4.3 4 1.9 4.4 4.6"/></svg></button>
+            <button class="tbtn export tab" role="tab" data-tab="export" aria-label="Export">Export</button>
+          </div>
+        </div>
+      </div>
+      <button class="hot seg-shots tab" role="tab" data-tab="shots" aria-label="Shots"></button>
+      <button class="hot seg-map tab" role="tab" data-tab="map" aria-label="Scene Map"></button>
+      <button class="hot script tab" role="tab" data-tab="script" aria-label="Script and coverage"></button>
     </div>
   </div>
   </div>
 
-</div>
+  <div class="caption" aria-live="polite">
+    <div class="caption-inner" id="caption">
+      <div class="kicker" id="capKicker"></div>
+      <h2 id="capTitle"></h2>
+      <p id="capText"></p>
+      <div class="chips" id="capChips"></div>
+    </div>
+    <div class="progress-row"><button class="nav-arrow inline prev" data-step="-1" aria-label="Previous highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5l-7 7 7 7"/></svg></button><div class="progress" id="progress"></div><button class="nav-arrow inline next" data-step="1" aria-label="Next highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 5l7 7-7 7"/></svg></button></div>
+  </div>
+</section>
 
-<!-- ON-SET (hero feature) -->
-<div style="border-top: 1px solid var(--border); position: relative; overflow: hidden;" id="onset">
-  <div style="position:absolute; top:-100px; right:-100px; width:500px; height:500px; background: radial-gradient(ellipse at center, rgba(62,207,255,0.07), transparent 70%); pointer-events:none;"></div>
-  <div class="feature-row">
-    <div>
-      <div class="fr-eyebrow">On set, live <span></span></div>
-      <div class="fr-emoji">📱</div>
-      <h2 class="fr-title">Run the day,<br>from your pocket.</h2>
-      <p class="fr-body">When the shoot day arrives, switch to a full-screen, check-off view of the day's scenes. Mark each shot as it's in the can, log your takes and circle the keeper — with the current setup blown up large and REF and MAP a tap away.</p>
-      <ul class="fr-list">
-        <li>Mark shots in the can; log takes and circle the keeper</li>
-        <li>Live Activity on the iPhone Lock Screen &amp; Dynamic Island</li>
-        <li>Step shot to shot without opening the app</li>
-        <li>Progress at a glance — shots done, scenes wrapped</li>
-      </ul>
-    </div>
-    <div class="fr-visual" style="background:transparent; border:none; box-shadow:none; display:flex; flex-wrap:wrap; justify-content:center; gap:26px; align-items:center;">
-      <!-- iPhone On-Set full (device-framed) -->
-      <img src="img/hero-iphone-frame.png" alt="On-Set mode on iPhone: the shoot day, checked off shot by shot" loading="lazy" decoding="async" style="height:480px; width:auto; filter:drop-shadow(0 24px 56px rgba(0,0,0,0.6));">
-      <!-- Live Activity banner -->
-      <img src="img/onset-liveactivity.jpg" alt="CinePlanner Live Activity on the iPhone Lock Screen" loading="lazy" decoding="async" style="width:300px; max-width:88%; border-radius:16px; box-shadow:0 16px 40px rgba(0,0,0,0.55);">
-    </div>
+<!-- CREW -->
+<div class="crew" aria-label="Made for directors, cinematographers, first ADs, gaffers, producers and film students">
+  <div class="crew-track">
+    <div class="crew-set"><span class="word">DIRECTORS</span><i class="dot"></i><span class="word">CINEMATOGRAPHERS</span><i class="dot"></i><span class="word">1ST ADs</span><i class="dot"></i><span class="word">GAFFERS</span><i class="dot"></i><span class="word">PRODUCERS</span><i class="dot"></i><span class="word">FILM STUDENTS</span><i class="dot"></i></div>
+    <div class="crew-set" aria-hidden="true"><span class="word">DIRECTORS</span><i class="dot"></i><span class="word">CINEMATOGRAPHERS</span><i class="dot"></i><span class="word">1ST ADs</span><i class="dot"></i><span class="word">GAFFERS</span><i class="dot"></i><span class="word">PRODUCERS</span><i class="dot"></i><span class="word">FILM STUDENTS</span><i class="dot"></i></div>
   </div>
 </div>
 
-<!-- ECOSYSTEM BAND -> CineStager -->
-<div class="eco-wrap">
-  <div class="eco-inner">
-    <div>
-      <div class="eco-eyebrow">Part of the same toolkit <span></span></div>
-      <h2 class="eco-title">Scout it in AR.<br>Plan it. Shoot it.</h2>
-      <p class="eco-body">Plan a shot on location in augmented reality with <strong style="color:#3ecfff;font-weight:500;">CineStager</strong> — real cameras, lenses and framelines — and its AR setups and top-down maps flow straight into CinePlanner to finish and shoot. One shared iCloud folder, read-only, no double work.</p>
-      <a href="https://cinestager.com" class="eco-cta" target="_blank" rel="noopener">Discover CineStager →</a>
-    </div>
-    <div class="eco-visual">
-      <img src="img/cinestager-ar.jpg" alt="CineStager AR view on location — camera, lens and framelines over a scanned set" loading="lazy" decoding="async">
-      <svg class="eco-arrow" width="40" height="22" viewBox="0 0 40 22" fill="none" aria-hidden="true">
-        <defs><linearGradient id="ecoArrow" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3ecfff"/><stop offset="1" stop-color="#1a4aff"/></linearGradient></defs>
-        <line x1="4" y1="11" x2="24" y2="11" stroke="url(#ecoArrow)" stroke-width="3" stroke-linecap="round"/>
-        <path d="M22 4 L36 11 L22 18 Z" fill="url(#ecoArrow)"/>
-      </svg>
-      <img src="img/cinestager-map.jpg" alt="CineStager top-down scene map that flows into CinePlanner" loading="lazy" decoding="async">
-    </div>
-  </div>
+<!-- NUMBERS -->
+<div class="numbers">
+  <div class="num"><b>3</b><span>Mac · iPad · iPhone</span></div>
+  <div class="num"><b>33</b><span>Lights &amp; grip</span></div>
+  <div class="num"><b>5</b><span>Ways to export</span></div>
+  <div class="num"><b>1</b><span>Price, once</span></div>
 </div>
 
-<!-- FEATURES GRID -->
-<div class="section-wrap" id="features">
-  <div class="section-label">More that comes with it</div>
-  <h2 class="section-title">One continuous chain,<br>script to set.</h2>
-  <p class="section-sub">Everything above, plus the pieces that keep a whole production organized and synced — instead of a spreadsheet, a drawing tool, some PDFs and a group chat.</p>
-  <div class="features-grid">
-    <div class="feature-item"><div class="feature-dot">🖼️</div><h3 class="feature-title">Reference frames &amp; gear</h3><p class="feature-body">Link lookbook images, previz renders or location photos to each shot, and log bodies, lens sets, focal lengths, aspect ratios and formats right beneath them.</p></div>
-    <div class="feature-item"><div class="feature-dot">🗂️</div><h3 class="feature-title">Versions &amp; series</h3><p class="feature-body">Keep multiple script revisions side-by-side and copy shots between drafts, and split larger projects into episodes without losing organization.</p></div>
-    <div class="feature-item"><div class="feature-dot">📤</div><h3 class="feature-title">Flexible export</h3><p class="feature-body">Output your plan as an interactive HTML page, a PDF shot list, plain text, or a dedicated "Script with Coverage" PDF.</p></div>
-    <div class="feature-item"><div class="feature-dot">🔗</div><h3 class="feature-title">Live web links</h3><p class="feature-body">Publish your shot list to a shareable link complete with images and video — it updates automatically whenever you republish.</p></div>
-    <div class="feature-item"><div class="feature-dot">☁️</div><h3 class="feature-title">iCloud sync, Mac &amp; iPad</h3><p class="feature-body">Start planning at your desk on Mac, then carry your full plan onto set on your iPad. Touch-optimized controls throughout.</p></div>
-    <div class="feature-item"><div class="feature-dot">◐</div><h3 class="feature-title">CineStager integration</h3><p class="feature-body">Pull in setups directly from the CineStager AR companion app — what you scout on location flows into your plan.</p></div>
-  </div>
-</div>
+<!-- MORE -->
+<div class="more"><a href="features.html" class="more-btn">See everything it can do <span aria-hidden="true">→</span></a></div>
 
-<!-- WHO IT'S FOR -->
-<div class="usecases-wrap" id="who">
-  <div class="section-wrap">
-    <div class="section-label">Built for filmmakers</div>
-    <h2 class="section-title">Crafted for the people<br>who plan the shoot.</h2>
-    <p class="section-sub">Whether you're prepping a high-concept short or an episodic series, CinePlanner keeps your creative vision clear, organized and synced everywhere.</p>
-    <div class="usecases-grid">
-      <div class="usecase-card"><span class="usecase-icon">🎥</span><div><h3 class="usecase-title">Directors &amp; DPs</h3><p class="usecase-body">Step on set with clear reference frames, lenses and blocking already pre-planned — your vision, laid out shot by shot.</p></div></div>
-      <div class="usecase-card"><span class="usecase-icon">📋</span><div><h3 class="usecase-title">1st ADs &amp; Line Producers</h3><p class="usecase-body">A filterable, shareable shot list and a strip-board schedule to build efficient, realistic shoot days.</p></div></div>
-      <div class="usecase-card"><span class="usecase-icon">🎓</span><div><h3 class="usecase-title">Indie crews &amp; film students</h3><p class="usecase-body">A fast, visual, modern alternative to complex production suites — from screenplay to shoot day.</p></div></div>
+<!-- PRICE + CTA -->
+<section class="cta" id="pricing">
+  <div class="cta-box">
+    <img class="icon" src="icon.svg" alt="">
+    <h2>Try everything free.<span>Then pay once.</span></h2>
+    <p>7 days with every feature. No subscription. Built by a cinematographer.</p>
+    <a href="https://apps.apple.com/nl/app/cineplanner/id6800298885" style="display:inline-block;line-height:0"><img src="appstore.svg" alt="Download on the App Store" style="height:56px;width:auto"></a>
+    <div class="cta-links">
+      <a href="features.html">All features</a>
+      <a href="https://cinestager.com">Works with CineStager</a>
+      <a href="privacy.html">Privacy</a>
     </div>
   </div>
-</div>
-
-<!-- MAKER STRIP -->
-<div class="maker-wrap">
-  <div class="maker-inner">
-    <div class="section-label" style="justify-content:center;">Built by a filmmaker</div>
-    <p class="maker-quote">"I'm a cinematographer, and I was tired of prepping every shoot across a spreadsheet, a drawing app and a pile of PDFs. So I built <b>the one place I always wanted</b> — the whole film, from the script to the shoot day, <b>ready in your hand on set</b>."</p>
-    <div class="maker-attr">Yannick Giraud · Cinematographer &amp; maker of CinePlanner</div>
-  </div>
-</div>
-
-<!-- DOWNLOAD / CTA -->
-<div class="cta-wrap" id="download">
-  <div class="cta-inner">
-    <div class="cta-glow"></div>
-    <img src="icon.svg" alt="CinePlanner" class="cta-icon">
-    <h2 class="cta-title">Design your shots.<br><span>Shoot your plan.</span></h2>
-    <p class="cta-sub">Free to try for 7 days, then unlock the full version with a one-time purchase — no subscription. Native on Mac and iPad, with an iPhone Live Activity for the set.</p>
-    <a href="https://apps.apple.com/nl/app/cineplanner/id6800298885" target="_blank" rel="noopener" style="display:inline-block; line-height:0;">
-      <img src="appstore.svg" alt="Download CinePlanner on the App Store" style="height:56px; width:auto;">
-    </a>
-  </div>
-</div>
+</section>
 
 <footer>
-  <div class="footer-brand">
-    <img src="icon.svg" alt="CinePlanner">
-    <span>CINEPLANNER</span>
-  </div>
+  <div class="footer-brand"><img src="icon.svg" alt="CinePlanner"><span>CINEPLANNER</span></div>
   <ul class="footer-links">
-    <li><a href="#features">Features</a></li>
-    <li><a href="#download">Download</a></li>
-    <li><a href="https://cinestager.com" target="_blank" rel="noopener">Also try CineStager</a></li>
-    <li><a href="privacy.html">Privacy Policy</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="https://cinestager.com">CineStager</a></li>
+    <li><a href="mailto:info@yannickgiraud.com">Contact</a></li>
   </ul>
   <span class="footer-copy">© 2026 CinePlanner by Yannick Giraud</span>
 </footer>
 
+<script>
+// Highlights: each button in the app's toolbar shows its scene and a short caption.
+var HIGHLIGHTS = {
+  shots:      { kicker: 'Shots', title: 'Every shot, logged.', text: 'Size, type, lens, grip and gear — with reference frames beside it.', chips: ['Size & type', 'Lens & grip', 'Camera from EXIF', 'Reference frames'] },
+  script:     { kicker: 'Coverage', title: 'See what covers every line.', text: 'Mark the script; every shot draws its own numbered line in the margin.', chips: ['Script beside shots', 'Numbered lines', 'Spot the gaps', 'PDF with coverage'] },
+  map:        { kicker: 'Scene map', title: 'Block it from above.', text: 'Cameras, cast and their moves on a satellite view, a floor plan or a scan.', chips: ['Satellite & plans', 'Movement arrows', '33 lights & grip', 'Sun & north'] },
+  schedule:   { kicker: 'Schedule', title: 'Build the days on a strip board.', text: 'Drag scenes into shoot days — sunrise, sunset and golden hour on each.', chips: ['Strip board', 'Day notes', 'Golden hour', 'A list on iPhone'] },
+  onset:      { kicker: 'On set', title: 'Run the day from your pocket.', text: 'Tick off shots and see what\'s next — on the Lock Screen too.', chips: ['Shots done', 'Now & next', 'Live Activity', 'Dynamic Island'] },
+  share:      { kicker: 'Share', title: 'Plan it together.', text: 'Invite your crew into the project. Their changes reach everyone.', chips: ['Can edit or view only', 'Recent changes', 'Through iCloud'] },
+  export:     { kicker: 'Export', title: 'One link for the whole crew.', text: 'Publish to the web, or export a webpage, a PDF or the script with coverage.', chips: ['Publish to web', 'Webpage', 'PDF', 'Script with coverage'] },
+  cinestager: { kicker: 'CineStager', title: 'Scouted in AR. Planned here.', text: 'Shots from CineStager arrive with their lens, stop, map and film look.', chips: ['Stills & video', 'On the scene map', 'Film look', 'Splats trained on Mac'] }
+};
+(function() {
+  var order = Object.keys(HIGHLIGHTS), DUR = 6000, MODAL = ['schedule', 'share', 'export', 'cinestager'];
+  var btns = document.querySelectorAll('.tab'), scenes = document.querySelectorAll('.scene');
+  var cap = document.getElementById('caption'), prog = document.getElementById('progress');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var current = 'shots', timer = null, auto = !reduce;
+  var screen = document.getElementById('screen');
+  order.forEach(function() { prog.appendChild(document.createElement('i')); });
+  prog.style.setProperty('--dur', DUR + 'ms');
+
+  function render(key) {
+    var h = HIGHLIGHTS[key];
+    document.getElementById('capKicker').textContent = h.kicker;
+    document.getElementById('capTitle').textContent = h.title;
+    document.getElementById('capText').textContent = h.text;
+    var c = document.getElementById('capChips'); c.innerHTML = '';
+    h.chips.forEach(function(t) { var s = document.createElement('span'); s.className = 'chip'; s.textContent = t; c.appendChild(s); });
+  }
+  function show(key) {
+    current = key;
+    btns.forEach(function(b) { var on = b.dataset.tab === key; b.setAttribute('aria-selected', on ? 'true' : 'false'); b.classList.toggle('on', on); });
+    screen.classList.toggle('modal', MODAL.indexOf(key) >= 0);
+    scenes.forEach(function(s) { s.classList.toggle('on', s.dataset.scene === key); });
+    cap.classList.add('swap');
+    setTimeout(function() { render(key); cap.classList.remove('swap'); }, 180);
+    var dots = prog.children, idx = order.indexOf(key);
+    for (var i = 0; i < dots.length; i++) { dots[i].classList.remove('on'); }
+    void prog.offsetWidth;
+    dots[idx].classList.add('on');
+  }
+  function schedule() {
+    clearTimeout(timer);
+    if (!auto) return;
+    timer = setTimeout(function() { show(order[(order.indexOf(current) + 1) % order.length]); schedule(); }, DUR);
+  }
+  function pick(key) { auto = false; prog.classList.add('paused'); clearTimeout(timer); show(key); }
+  btns.forEach(function(b) { b.addEventListener('click', function() { pick(b.dataset.tab); }); });
+  function step(d) { pick(order[(order.indexOf(current) + d + order.length) % order.length]); }
+  document.querySelectorAll('.nav-arrow').forEach(function(a) { a.addEventListener('click', function() { step(+a.dataset.step); }); });
+  // The arrow keys too, while the explorer is in view.
+  var inView = false;
+  document.addEventListener('keydown', function(e) {
+    if (!inView || e.target.closest('input, textarea')) return;
+    if (e.key === 'ArrowLeft') step(-1); else if (e.key === 'ArrowRight') step(1);
+  });
+  // Auto-advance only while the explorer is on screen.
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es) { es.forEach(function(e) { inView = e.isIntersecting; if (e.isIntersecting) schedule(); else clearTimeout(timer); }); }, { threshold: 0.3 }).observe(document.getElementById('inside'));
+  }
+  if (!auto) prog.classList.add('paused');
+  render('shots'); show('shots');
+})();
+
+// Solid nav once the page scrolls.
+(function() {
+  var nav = document.querySelector('nav');
+  function upd() { nav.classList.toggle('scrolled', window.scrollY > 40); }
+  upd(); window.addEventListener('scroll', upd, { passive: true });
+})();
+</script>
 </body>
 </html>
